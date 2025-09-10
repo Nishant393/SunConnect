@@ -21,14 +21,32 @@ const userSchema = new Schema(
          required: true,
          trim: true,
          lowercase: true,
-         match: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 
+         match: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
       },
       password: {
          type: String,
          select: false,
          required: true,
-         minlength: 8, 
+         minlength: 8,
       },
+      project: {
+         kiloWatts: { type: Number},       // system capacity in kW
+         plateNo: { type: String },         // solar plate serial number
+         company: { type: String, },         // solar plate company
+
+         inverterCompany: { type: String}, // inverter manufacturer
+         inverterModel: { type: String },                   // inverter model
+         inverterCapacity: { type: Number },                // capacity in kW
+
+         installationDate: { type: Date, default: Date.now }, // install date
+         warrantyPeriod: { type: Number, default: 5 },        // warranty in years
+         location: { type: String },                          // site address/city
+
+         expectedGeneration: { type: Number },  // expected kWh/month
+         currentGeneration: { type: Number },   // actual kWh generated
+         meterNo: { type: String }              // electricity meter number
+      },
+
       isVerified: {
          type: Boolean,
          default: false,
@@ -71,7 +89,7 @@ userSchema.methods.generatePasswordResetToken = function () {
       .createHash("sha256")
       .update(resetToken)
       .digest("hex");
-   
+
    this.resetPasswordExpires = Date.now() + 5 * 60 * 1000; // 5 minutes
    return resetToken;
 };

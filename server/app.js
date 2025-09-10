@@ -6,6 +6,7 @@ import express from "express";
 import { createServer } from 'http';
 import { errorMiddleware } from "./middlewares/error.js";
 import userRoute from "./routes/user.js";
+// import clientRoute from "./routes/client.js";
 import { corsOption } from "./utils/constant.js";
 import { connectDB } from "./utils/features.js";
 
@@ -44,6 +45,7 @@ app.get("/", async(req, res) => {
 });
 
 app.use("/user",userRoute);
+// app.use ("/client",clientRoute)
 
 app.use(errorMiddleware)
 
