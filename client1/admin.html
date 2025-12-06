@@ -1,0 +1,1992 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Client Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-tab.active {
+            color: #3498db;
+            background: white;
+        }
+
+        .nav-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #3498db;
+        }
+
+        .nav-tab:hover {
+            background: #e9ecef;
+            color: #3498db;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .section-title {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 15px 20px;
+            margin: 30px -30px 20px -30px;
+            border-left: 4px solid #3498db;
+            font-weight: 700;
+            color: #2c3e50;
+            font-size: 18px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60, #229954);
+            color: white;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(39, 174, 96, 0.4);
+        }
+
+        .clients-grid,
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .client-card,
+        .contact-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .client-card::before,
+        .contact-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+
+        .contact-card.unread::before {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .client-card:hover,
+        .contact-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+            border-color: #3498db;
+        }
+
+        .client-info h3,
+        .contact-info h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .client-info p,
+        .contact-info p {
+            margin: 5px 0;
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .client-info .highlight,
+        .contact-info .highlight {
+            color: #3498db;
+            font-weight: 600;
+        }
+
+        .client-actions,
+        .contact-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 16px;
+            background: white;
+        }
+
+        .search-box::after {
+            content: '🔍';
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+        }
+
+        .message {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .message.success {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            font-size: 18px;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 50%;
+            border-top-color: #3498db;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .contact-message {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 3px solid #3498db;
+        }
+
+        .contact-date {
+            font-size: 12px;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .unread-badge {
+            background: #e74c3c;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .clients-grid,
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .client-actions,
+            .contact-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #87ceeb 100%);
+            padding: 1rem 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-logout {
+            background: linear-gradient(45deg, #ff4757, #ff6b7a);
+            color: white;
+        }
+
+        .btn-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .mobile-menu span {
+            width: 25px;
+            height: 3px;
+            background: white;
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 3px;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(10px, 10px);
+            }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            padding: 0 2rem;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            font-weight: 800;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: slideInLeft 1s ease-out 0.2s both;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-100px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .hero .subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            animation: slideInRight 1s ease-out 0.4s both;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .hero-icons {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+            animation: fadeIn 1s ease-out 0.6s both;
+        }
+
+        .hero-icon {
+            font-size: 3rem;
+            color: #ffd93d;
+            animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        .hero-icon:nth-child(2) {
+            animation-delay: 0.5s;
+        }
+
+        .hero-icon:nth-child(3) {
+            animation-delay: 1s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .cta-button {
+            background: linear-gradient(45deg, #ffd93d, #ff6b6b);
+            color: white;
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 8px 25px rgba(255, 217, 61, 0.4);
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 8px 25px rgba(255, 217, 61, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 12px 35px rgba(255, 217, 61, 0.6);
+            }
+
+            100% {
+                box-shadow: 0 8px 25px rgba(255, 217, 61, 0.4);
+            }
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(255, 217, 61, 0.6);
+            animation: none;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 5rem 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 5rem auto;
+            padding: 0 2rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .feature-card:hover::before {
+            left: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        /* About Section */
+        .about {
+            padding: 5rem 0;
+            background: white;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            margin: 1rem auto;
+            border-radius: 2px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu {
+                display: flex;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero .subtitle {
+                font-size: 1.1rem;
+            }
+
+            .hero-icons {
+                gap: 1rem;
+            }
+
+            .hero-icon {
+                font-size: 2rem;
+            }
+
+            .nav-container {
+                padding: 0 1rem;
+            }
+
+            .hero-content {
+                padding: 0 1rem;
+            }
+
+            .cta-button {
+                padding: 0.8rem 2rem;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .auth-buttons {
+                gap: 0.5rem;
+            }
+
+            .btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Loading animation */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .page-loader.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Footer Section */
+        .footer {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #87ceeb 100%);
+            color: white;
+            padding: 3rem 2rem 1rem;
+            margin-top: 3rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer h3,
+        .footer h4 {
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .footer p,
+        .footer a {
+            font-size: 0.95rem;
+            color: #f0f0f0;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .footer a:hover {
+            color: #ffd93d;
+        }
+
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin: 0.5rem 0;
+        }
+
+        .social-icons {
+            margin-top: 1rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-icons a {
+            color: white;
+            font-size: 1.3rem;
+            transition: 0.3s;
+        }
+
+        .social-icons a:hover {
+            color: #ffd93d;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            margin-top: 2rem;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <!-- Logo -->
+            <a href="#" class="logo">
+                <i class="fas fa-solar-panel"></i>
+                SunConnect
+            </a>
+            <!-- Navigation Links -->
+            <ul class="nav-links" id="navLinks">
+                <li><a href="/index.html"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="/about.html"><i class="fas fa-info-circle"></i> About</a></li>
+                <li><a href="./contact.html"><i class="fas fa-envelope"></i> Contact</a></li>
+            </ul>
+
+            <!-- Authentication Buttons -->
+            <div class="auth-buttons" id="authButtons">
+                <!-- Dynamic content will be inserted here by JavaScript -->
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <div class="mobile-menu" id="mobileMenu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('contact')">📧 Contact Messages</button>
+            <button class="nav-tab" onclick="showTab('create')">➕ Create Client</button>
+            <button class="nav-tab" onclick="showTab('manage')">👥 Manage Clients</button>
+        </div>
+
+        <div id="contact" class="tab-content active">
+            <div class="search-box">
+                <input type="text" id="searchContacts"
+                    placeholder="Search contact messages by name, email, or subject..." onkeyup="searchContacts()">
+            </div>
+
+            <button class="btn btn-success" onclick="loadContacts()" style="margin-bottom: 20px;">🔄 Refresh
+                Messages</button>
+
+            <div id="contactsContainer">
+                <div class="loading">Loading contact messages...</div>
+            </div>
+        </div>
+
+        <div id="create" class="tab-content">
+            <div class="section-title">👤 Basic Information</div>
+
+            <form id="createClientForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="name">Full Name *</label>
+                        <input type="text" id="name" name="name" required placeholder="Enter client's full name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" required placeholder="client@example.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mobileNumber">Mobile Number *</label>
+                        <input type="tel" id="mobileNumber" name="mobileNumber" required placeholder="+1234567890"
+                            pattern="[+]?[0-9]{10,14}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password *</label>
+                        <input type="password" id="password" name="password" required
+                            placeholder="Enter secure password">
+                    </div>
+                </div>
+
+                <div class="section-title">⚡ Solar Project Details</div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="kiloWatts">System Capacity (kW)</label>
+                        <input type="number" id="kiloWatts" name="project.kiloWatts" step="0.1" placeholder="e.g., 5.5">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="plateNo">Solar Plate Serial Number</label>
+                        <input type="text" id="plateNo" name="project.plateNo" placeholder="SP123456789">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="company">Solar Plate Company</label>
+                        <input type="text" id="company" name="project.company" placeholder="e.g., SunPower, Tesla">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inverterCompany">Inverter Company</label>
+                        <input type="text" id="inverterCompany" name="project.inverterCompany"
+                            placeholder="e.g., SMA, Fronius">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inverterModel">Inverter Model</label>
+                        <input type="text" id="inverterModel" name="project.inverterModel" placeholder="Model number">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inverterCapacity">Inverter Capacity (kW)</label>
+                        <input type="number" id="inverterCapacity" name="project.inverterCapacity" step="0.1"
+                            placeholder="e.g., 5.0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="installationDate">Installation Date</label>
+                        <input type="date" id="installationDate" name="project.installationDate">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="warrantyPeriod">Warranty Period (Years)</label>
+                        <input type="number" id="warrantyPeriod" name="project.warrantyPeriod" placeholder="5" min="1"
+                            max="25">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location">Installation Location</label>
+                        <input type="text" id="location" name="project.location" placeholder="City, State">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="expectedGeneration">Expected Generation (kWh/month)</label>
+                        <input type="number" id="expectedGeneration" name="project.expectedGeneration" step="0.1"
+                            placeholder="e.g., 750">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="currentGeneration">Current Generation (kWh)</label>
+                        <input type="number" id="currentGeneration" name="project.currentGeneration" step="0.1"
+                            placeholder="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="meterNo">Electricity Meter Number</label>
+                        <input type="text" id="meterNo" name="project.meterNo" placeholder="Meter serial number">
+                    </div>
+                </div>
+
+                <div class="section-title">💰 Financial Details</div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="totalCost">Total Project Cost</label>
+                        <input type="number" id="totalCost" name="project.totalCost" step="0.01"
+                            placeholder="e.g., 15000">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="paidCost">Amount Paid</label>
+                        <input type="number" id="paidCost" name="project.paidCost" step="0.01" placeholder="e.g., 5000">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="remainingCost">Remaining Amount</label>
+                        <input type="number" id="remainingCost" name="project.remainingCost" step="0.01"
+                            placeholder="Auto-calculated">
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    <button type="submit" class="btn btn-primary">Create Client</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="manage" class="tab-content">
+            <div class="search-box">
+                <input type="text" id="searchClients" placeholder="Search clients by name, email, or mobile number..."
+                    onkeyup="searchClients()">
+            </div>
+
+            <button class="btn btn-success" onclick="loadClients()" style="margin-bottom: 20px;">🔄 Refresh
+                List</button>
+
+            <div id="clientsContainer">
+                <div class="loading">Loading clients...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let clients = [];
+        let filteredClients = [];
+        let contacts = [];
+        let filteredContacts = [];
+
+        // API base URL - adjust this to match your backend URL
+        const API_BASE = 'http://localhost:8000/user'; // Change this to your actual API URL
+        const CONTACT_API = 'http://localhost:8000/contact'; // Add your contact API URL
+
+        // Tab functionality
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove active class from all nav tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            // Load data when tabs are opened
+            if (tabName === 'manage') {
+                loadClients();
+            } else if (tabName === 'contact') {
+                loadContacts();
+            }
+        }
+
+        // Show message
+        function showMessage(message, type = 'success') {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.textContent = message;
+
+            const container = document.querySelector('.tab-content.active');
+            container.insertBefore(messageDiv, container.firstChild);
+
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+
+        // Load all contacts
+        async function loadContacts() {
+            const container = document.getElementById('contactsContainer');
+            container.innerHTML = '<div class="loading">Loading contact messages...</div>';
+
+            try {
+                // You'll need to implement this endpoint in your backend
+                // For demo purposes, showing sample data
+                simulateContacts();
+            } catch (error) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #e74c3c;">
+                        <h3>Error loading contact messages</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Simulate contacts for demo
+        function simulateContacts() {
+            contacts = [
+                {
+                    _id: '1',
+                    name: 'Sarah Johnson',
+                    email: 'sarah@example.com',
+                    phone: '+1234567890',
+                    subject: 'Solar Installation Inquiry',
+                    message: 'Hi, I am interested in installing solar panels on my roof. Can you provide a quote for a 5kW system?',
+                    createdAt: new Date('2024-01-15T10:30:00Z'),
+                    isRead: false
+                },
+                {
+                    _id: '2',
+                    name: 'Michael Chen',
+                    email: 'michael@example.com',
+                    phone: '+9876543210',
+                    subject: 'Battery Storage Options',
+                    message: 'I already have solar panels and want to add battery storage. What options do you have available?',
+                    createdAt: new Date('2024-01-14T14:20:00Z'),
+                    isRead: true
+                },
+                {
+                    _id: '3',
+                    name: 'Emma Davis',
+                    email: 'emma@example.com',
+                    phone: '+5551234567',
+                    subject: 'Maintenance Service',
+                    message: 'My solar panels were installed 2 years ago. Do you provide maintenance services? What does it include?',
+                    createdAt: new Date('2024-01-13T09:15:00Z'),
+                    isRead: false
+                }
+            ];
+            filteredContacts = [...contacts];
+            displayContacts();
+        }
+
+        // Display contacts
+        function displayContacts() {
+            const container = document.getElementById('contactsContainer');
+
+            if (filteredContacts.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #6c757d;">
+                        <h3>No contact messages found</h3>
+                        <p>No messages match your search criteria.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const contactsHTML = filteredContacts.map(contact => `
+                <div class="contact-card ${!contact.isRead ? 'unread' : ''}">
+                    <div class="contact-info">
+                        <h3>
+                            ${contact.name} 
+                            ${!contact.isRead ? '<span class="unread-badge">NEW</span>' : ''}
+                        </h3>
+                        <p><strong>Email:</strong> ${contact.email}</p>
+                        <p><strong>Phone:</strong> ${contact.phone || 'Not provided'}</p>
+                        <p><strong>Subject:</strong> <span class="highlight">${contact.subject}</span></p>
+                        <div class="contact-message">
+                            ${contact.message}
+                        </div>
+                        <p class="contact-date">
+                            <strong>Received:</strong> ${new Date(contact.createdAt).toLocaleString()}
+                        </p>
+                    </div>
+                    <div class="contact-actions">
+                        ${!contact.isRead ? `
+                            <button class="btn btn-primary btn-sm" onclick="markAsRead('${contact._id}')">
+                                ✓ Mark as Read
+                            </button>
+                        ` : ''}
+                        <button class="btn btn-success btn-sm" onclick="replyToContact('${contact._id}')">
+                            📧 Reply
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteContact('${contact._id}', '${contact.name}')">
+                            🗑️ Delete
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = `<div class="contact-grid">${contactsHTML}</div>`;
+        }
+
+        // Search contacts
+        function searchContacts() {
+            const searchTerm = document.getElementById('searchContacts').value.toLowerCase();
+
+            if (searchTerm === '') {
+                filteredContacts = [...contacts];
+            } else {
+                filteredContacts = contacts.filter(contact =>
+                    contact.name.toLowerCase().includes(searchTerm) ||
+                    contact.email.toLowerCase().includes(searchTerm) ||
+                    contact.subject.toLowerCase().includes(searchTerm) ||
+                    contact.message.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            displayContacts();
+        }
+
+        // Mark contact as read
+        async function markAsRead(contactId) {
+            try {
+                // Update locally for demo
+                const contactIndex = contacts.findIndex(c => c._id === contactId);
+                if (contactIndex !== -1) {
+                    contacts[contactIndex].isRead = true;
+                    filteredContacts = [...contacts];
+                    displayContacts();
+                    showMessage('Message marked as read', 'success');
+                }
+
+                // In real implementation, make API call:
+                // const response = await fetch(`${CONTACT_API}/mark-read/${contactId}`, {
+                //     method: 'PUT'
+                // });
+            } catch (error) {
+                showMessage('Failed to mark message as read', 'error');
+            }
+        }
+
+        // Reply to contact
+        function replyToContact(contactId) {
+            const contact = contacts.find(c => c._id === contactId);
+            if (!contact) return;
+
+            const emailSubject = `Re: ${contact.subject}`;
+            const emailBody = `Hello ${contact.name},\n\nThank you for contacting us regarding "${contact.subject}".\n\n`;
+
+            // Open email client
+            window.open(`mailto:${contact.email}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`, '_blank');
+
+            // Mark as read
+            markAsRead(contactId);
+        }
+
+        // Delete contact
+        async function deleteContact(contactId, contactName) {
+            if (!confirm(`Are you sure you want to delete the message from "${contactName}"? This action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                // Remove from local array for demo
+                contacts = contacts.filter(c => c._id !== contactId);
+                filteredContacts = filteredContacts.filter(c => c._id !== contactId);
+                displayContacts();
+                showMessage(`Message from "${contactName}" deleted successfully!`, 'success');
+
+                // In real implementation:
+                // const response = await fetch(`${CONTACT_API}/delete/${contactId}`, {
+                //     method: 'DELETE'
+                // });
+            } catch (error) {
+                showMessage('Failed to delete message', 'error');
+            }
+        }
+
+        // Create client form submission
+        document.getElementById('createClientForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const clientData = {};
+
+            // Process form data
+            for (let [key, value] of formData.entries()) {
+                if (key.includes('.')) {
+                    const [parent, child] = key.split('.');
+                    if (!clientData[parent]) clientData[parent] = {};
+                    clientData[parent][child] = value || undefined;
+                } else {
+                    clientData[key] = value;
+                }
+            }
+
+            // Calculate remaining cost
+            if (clientData.project && clientData.project.totalCost && clientData.project.paidCost) {
+                clientData.project.remainingCost = clientData.project.totalCost - clientData.project.paidCost;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(clientData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showMessage('Client created successfully!', 'success');
+                    document.getElementById('createClientForm').reset();
+                } else {
+                    showMessage(result.error || 'Failed to create client', 'error');
+                }
+            } catch (error) {
+                showMessage('Network error: ' + error.message, 'error');
+            }
+        });
+
+        // Auto-calculate remaining cost
+        document.getElementById('totalCost').addEventListener('input', calculateRemaining);
+        document.getElementById('paidCost').addEventListener('input', calculateRemaining);
+
+        function calculateRemaining() {
+            const total = parseFloat(document.getElementById('totalCost').value) || 0;
+            const paid = parseFloat(document.getElementById('paidCost').value) || 0;
+            document.getElementById('remainingCost').value = (total - paid).toFixed(2);
+        }
+
+        // Load all clients using the provided API endpoint
+        async function loadClients() {
+            const container = document.getElementById('clientsContainer');
+            container.innerHTML = '<div class="loading">Loading clients...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE}/all`);
+                const data = await response.json();
+
+                if (data.success) {
+                    clients = data.users;
+                    filteredClients = [...clients];
+                    displayClients();
+                } else {
+                    throw new Error(data.message || 'Failed to fetch clients');
+                }
+            } catch (error) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #e74c3c;">
+                        <h3>Error loading clients</h3>
+                        <p>${error.message}</p>
+                        <button class="btn btn-primary" onclick="simulateClients()" style="margin-top: 20px;">
+                            Show Demo Data
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Simulate clients for demo
+        function simulateClients() {
+            clients = [
+                {
+                    _id: '1',
+                    name: 'John Doe',
+                    email: 'john@example.com',
+                    mobileNumber: '+1234567890',
+                    isVerified: true,
+                    project: {
+                        kiloWatts: 5.5,
+                        company: 'SunPower',
+                        location: 'California',
+                        totalCost: 15000,
+                        paidCost: 10000,
+                        remainingCost: 5000
+                    }
+                },
+                {
+                    _id: '2',
+                    name: 'Jane Smith',
+                    email: 'jane@example.com',
+                    mobileNumber: '+9876543210',
+                    isVerified: false,
+                    project: {
+                        kiloWatts: 3.2,
+                        company: 'Tesla',
+                        location: 'Texas',
+                        totalCost: 12000,
+                        paidCost: 12000,
+                        remainingCost: 0
+                    }
+                }
+            ];
+            filteredClients = [...clients];
+            displayClients();
+        }
+
+        // Display clients
+        function displayClients() {
+            const container = document.getElementById('clientsContainer');
+
+            if (filteredClients.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #6c757d;">
+                        <h3>No clients found</h3>
+                        <p>Create your first client using the Create Client tab.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const clientsHTML = filteredClients.map(client => `
+                <div class="client-card">
+                    <div class="client-info">
+                        <h3>${client.name}</h3>
+                        <p><strong>Email:</strong> ${client.email}</p>
+                        <p><strong>Mobile:</strong> ${client.mobileNumber}</p>
+                        <p><strong>Status:</strong> 
+                            <span class="highlight">${client.isVerified ? '✅ Verified' : '⏳ Pending'}</span>
+                        </p>
+                        ${client.project ? `
+                            <p><strong>System:</strong> ${client.project.kiloWatts || 'N/A'} kW</p>
+                            <p><strong>Company:</strong> ${client.project.company || 'N/A'}</p>
+                            <p><strong>Location:</strong> ${client.project.location || 'N/A'}</p>
+                            <p><strong>Total Cost:</strong> ${client.project.totalCost || 0}</p>
+                            <p><strong>Remaining:</strong> 
+                                <span class="highlight">${client.project.remainingCost || 0}</span>
+                            </p>
+                        ` : '<p><em>No project data</em></p>'}
+                    </div>
+                    <div class="client-actions">
+                        <button class="btn btn-primary btn-sm" onclick="editClient('${client._id}')">
+                            ✏️ Edit
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteClient('${client._id}', '${client.name}')">
+                            🗑️ Delete
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = `<div class="clients-grid">${clientsHTML}</div>`;
+        }
+
+        // Search clients
+        function searchClients() {
+            const searchTerm = document.getElementById('searchClients').value.toLowerCase();
+
+            if (searchTerm === '') {
+                filteredClients = [...clients];
+            } else {
+                filteredClients = clients.filter(client =>
+                    client.name.toLowerCase().includes(searchTerm) ||
+                    client.email.toLowerCase().includes(searchTerm) ||
+                    client.mobileNumber.includes(searchTerm)
+                );
+            }
+
+            displayClients();
+        }
+
+        // Edit client
+        async function editClient(clientId) {
+            const client = clients.find(c => c._id === clientId);
+            if (!client) return;
+
+            // Switch to create tab and populate form
+            showTab('create');
+            document.querySelector('[onclick="showTab(\'create\')"]').click();
+
+            // Populate form fields
+            document.getElementById('name').value = client.name || '';
+            document.getElementById('email').value = client.email || '';
+            document.getElementById('mobileNumber').value = client.mobileNumber || '';
+
+            if (client.project) {
+                document.getElementById('kiloWatts').value = client.project.kiloWatts || '';
+                document.getElementById('plateNo').value = client.project.plateNo || '';
+                document.getElementById('company').value = client.project.company || '';
+                document.getElementById('inverterCompany').value = client.project.inverterCompany || '';
+                document.getElementById('inverterModel').value = client.project.inverterModel || '';
+                document.getElementById('inverterCapacity').value = client.project.inverterCapacity || '';
+                document.getElementById('warrantyPeriod').value = client.project.warrantyPeriod || '';
+                document.getElementById('location').value = client.project.location || '';
+                document.getElementById('expectedGeneration').value = client.project.expectedGeneration || '';
+                document.getElementById('currentGeneration').value = client.project.currentGeneration || '';
+                document.getElementById('meterNo').value = client.project.meterNo || '';
+                document.getElementById('totalCost').value = client.project.totalCost || '';
+                document.getElementById('paidCost').value = client.project.paidCost || '';
+                document.getElementById('remainingCost').value = client.project.remainingCost || '';
+
+                if (client.project.installationDate) {
+                    const date = new Date(client.project.installationDate);
+                    document.getElementById('installationDate').value = date.toISOString().split('T')[0];
+                }
+            }
+
+            // Change form to update mode
+            const form = document.getElementById('createClientForm');
+            const submitBtn = form.querySelector('button[type="submit"]');
+            submitBtn.textContent = 'Update Client';
+            submitBtn.onclick = (e) => updateClient(e, clientId);
+
+            showMessage(`Editing client: ${client.name}`, 'success');
+        }
+
+        // Update client
+        async function updateClient(e, clientId) {
+            e.preventDefault();
+
+            const formData = new FormData(document.getElementById('createClientForm'));
+            const clientData = {};
+
+            // Process form data
+            for (let [key, value] of formData.entries()) {
+                if (key.includes('.')) {
+                    const [parent, child] = key.split('.');
+                    if (!clientData[parent]) clientData[parent] = {};
+                    if (value) clientData[parent][child] = value;
+                } else {
+                    if (value) clientData[key] = value;
+                }
+            }
+
+            // Calculate remaining cost
+            if (clientData.project && clientData.project.totalCost && clientData.project.paidCost) {
+                clientData.project.remainingCost = clientData.project.totalCost - clientData.project.paidCost;
+            }
+
+            // Remove password from update if empty
+            if (!clientData.password) {
+                delete clientData.password;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/update/${clientId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(clientData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showMessage('Client updated successfully!', 'success');
+                    resetForm();
+                    loadClients();
+                } else {
+                    showMessage(result.error || 'Failed to update client', 'error');
+                }
+            } catch (error) {
+                showMessage('Network error: ' + error.message, 'error');
+            }
+        }
+
+        // Delete client
+        async function deleteClient(clientId, clientName) {
+            if (!confirm(`Are you sure you want to delete client "${clientName}"? This action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/delete/${clientId}`, {
+                    method: 'DELETE'
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showMessage(`Client "${clientName}" deleted successfully!`, 'success');
+
+                    // Remove from local array
+                    clients = clients.filter(c => c._id !== clientId);
+                    filteredClients = filteredClients.filter(c => c._id !== clientId);
+                    displayClients();
+                } else {
+                    showMessage(result.error || 'Failed to delete client', 'error');
+                }
+            } catch (error) {
+                showMessage('Network error: ' + error.message, 'error');
+            }
+        }
+
+        // Reset form to create mode
+        function resetForm() {
+            const form = document.getElementById('createClientForm');
+            const submitBtn = form.querySelector('button[type="submit"]');
+            submitBtn.textContent = 'Create Client';
+            submitBtn.onclick = null;
+            form.reset();
+        }
+
+        // Enhanced form validation
+        function validateForm() {
+            const requiredFields = ['name', 'email', 'mobileNumber', 'password'];
+            let isValid = true;
+
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (!field.value.trim()) {
+                    field.style.borderColor = '#e74c3c';
+                    isValid = false;
+                } else {
+                    field.style.borderColor = '#e9ecef';
+                }
+            });
+
+            // Email validation
+            const email = document.getElementById('email');
+            const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (email.value && !emailRegex.test(email.value)) {
+                email.style.borderColor = '#e74c3c';
+                showMessage('Please enter a valid email address', 'error');
+                isValid = false;
+            }
+
+            // Mobile number validation
+            const mobile = document.getElementById('mobileNumber');
+            const mobileRegex = /^[+]?[0-9]{10,14}$/;
+            if (mobile.value && !mobileRegex.test(mobile.value)) {
+                mobile.style.borderColor = '#e74c3c';
+                showMessage('Please enter a valid mobile number', 'error');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        // Add validation to form submission
+        document.getElementById('createClientForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            if (!validateForm()) {
+                return;
+            }
+
+            // Continue with form submission
+            const submitBtn = this.querySelector('button[type="submit"]');
+            if (submitBtn.textContent === 'Update Client') {
+                return;
+            }
+
+            // Handle create client
+            const formData = new FormData(this);
+            const clientData = {};
+
+            for (let [key, value] of formData.entries()) {
+                if (key.includes('.')) {
+                    const [parent, child] = key.split('.');
+                    if (!clientData[parent]) clientData[parent] = {};
+                    if (value) clientData[parent][child] = value;
+                } else {
+                    if (value) clientData[key] = value;
+                }
+            }
+
+            // Calculate remaining cost
+            if (clientData.project && clientData.project.totalCost && clientData.project.paidCost) {
+                clientData.project.remainingCost = parseFloat(clientData.project.totalCost) - parseFloat(clientData.project.paidCost);
+            }
+
+            createClientAPI(clientData);
+        });
+
+        async function createClientAPI(clientData) {
+            try {
+                const response = await fetch(`${API_BASE}/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(clientData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showMessage('Client created successfully!', 'success');
+                    document.getElementById('createClientForm').reset();
+
+                    // Add to local array
+                    if (result.user) {
+                        clients.push(result.user);
+                        filteredClients = [...clients];
+                    }
+                } else {
+                    showMessage(result.error || 'Failed to create client', 'error');
+                }
+            } catch (error) {
+                showMessage('Network error: ' + error.message, 'error');
+            }
+        }
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function (e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch (e.key) {
+                    case '1':
+                        e.preventDefault();
+                        document.querySelector('[onclick="showTab(\'contact\')"]').click();
+                        break;
+                    case '2':
+                        e.preventDefault();
+                        document.querySelector('[onclick="showTab(\'create\')"]').click();
+                        break;
+                    case '3':
+                        e.preventDefault();
+                        document.querySelector('[onclick="showTab(\'manage\')"]').click();
+                        break;
+                }
+            }
+        });
+
+        // Add tooltips for keyboard shortcuts
+        document.querySelector('[onclick="showTab(\'contact\')"]').title = 'Contact Messages (Ctrl/Cmd + 1)';
+        document.querySelector('[onclick="showTab(\'create\')"]').title = 'Create Client (Ctrl/Cmd + 2)';
+        document.querySelector('[onclick="showTab(\'manage\')"]').title = 'Manage Clients (Ctrl/Cmd + 3)';
+
+        // Initialize - load contacts by default
+        document.addEventListener('DOMContentLoaded', function () {
+            loadContacts();
+        });
+    </script>
+
+    <script>
+        // DOM elements
+        const authButtons = document.getElementById('authButtons');
+        const pageLoader = document.getElementById('pageLoader');
+        const navbar = document.getElementById('navbar');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const navLinks = document.getElementById('navLinks');
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', async function () {
+            // Hide page loader after content loads
+            setTimeout(() => {
+                pageLoader.classList.add('fade-out');
+            }, 1500);
+
+            // 🔹 Check login from backend
+            await checkLoginStatus();
+
+            // Add scroll effect to navbar
+            window.addEventListener('scroll', handleNavbarScroll);
+
+            // Add click event listeners
+            setupEventListeners();
+        });
+
+        /**
+         * Call backend to check if user is logged in
+         */
+
+        async function checkLoginStatus() {
+            try {
+                // ✅ Fetch profile data with JWT token
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    showProfileAuthForms();
+                    return;
+                }
+
+                const res = await fetch('http://localhost:8000/user/me', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                console.log(res)
+
+                if (res.ok) {
+                    const user = await res.json();
+                    updateAuthButtons(true, user); // logged in
+                } else {
+                    updateAuthButtons(false); // not logged in
+                }
+            } catch (error) {
+                console.error("Login check failed:", error);
+                updateAuthButtons(false);
+            }
+        }
+
+        /**
+         * Updates authentication buttons
+         */
+        function updateAuthButtons(isLogin, user) {
+            authButtons.innerHTML = '';
+
+            if (isLogin) {
+                // If admin -> show dashboard button
+                console.log("admin", user?.isAdmin)
+                if (user?.isAdmin) {
+                    authButtons.innerHTML = `
+                <button class="btn btn-secondary" onclick="goToDashboard()">
+                    <i class="fas fa-tools"></i> Dashboard
+                </button>
+                <button class="btn btn-logout" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            `;
+                } else {
+                    // Normal user
+                    authButtons.innerHTML = `
+                <button class="btn btn-secondary" onclick="showProfile()">
+                    <i class="fas fa-user"></i>
+                    ${user?.name || "Profile"}
+                </button>
+                <button class="btn btn-logout" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            `;
+                }
+            } else {
+                // Not logged in
+                authButtons.innerHTML = `
+            <a class="btn btn-primary" href="./login.html">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+            <a class="btn btn-primary" href="./signup.html">
+                <i class="fas fa-user-plus"></i> Signup
+            </a>
+        `;
+            }
+        }
+
+        // Redirect to dashboard page
+        function goToDashboard() {
+            window.location.href = "./admin.html"; // adjust path as needed
+        }
+
+        /**
+         * Handles navbar scroll effect
+         */
+        function handleNavbarScroll() {
+            if (window.scrollY > 100) {
+                navbar.style.background =
+                    'linear-gradient(135deg, rgba(30, 60, 114, 0.95) 0%, rgba(42, 82, 152, 0.95) 50%, rgba(135, 206, 235, 0.95) 100%)';
+                navbar.style.backdropFilter = 'blur(10px)';
+            } else {
+                navbar.style.background =
+                    'linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #87ceeb 100%)';
+                navbar.style.backdropFilter = 'none';
+            }
+        }
+
+        function setupEventListeners() {
+            // Mobile menu toggle
+            mobileMenu.addEventListener('click', toggleMobileMenu);
+        }
+
+        function toggleMobileMenu() {
+            navLinks.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+        }
+
+        function logout() {
+            // If you store JWT in localStorage
+            localStorage.removeItem("token");
+
+            // If you store JWT in sessionStorage
+            sessionStorage.removeItem("token");
+
+            // If your server sets cookies, you can clear it like this:
+            document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+
+            // Redirect to login page
+            window.location.href = "login.html";
+        }
+
+
+        // Show profile
+        function showProfile() {
+            window.location.href = "./profile.html";
+        }
+    </script>
+</body>
+
+</html>
