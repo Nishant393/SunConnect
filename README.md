@@ -1,2 +1,2 @@
 # SunConnect
-this is college cdh project .
+this is college project.
